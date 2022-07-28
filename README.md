@@ -2,9 +2,6 @@
 
 Flight Tracker microservice used to query customer's flight path.
 
-I wanted to keep it simple for the review, but ideally I would split this microservice following the [Standard Go Project Layout](https://github.com/golang-standards/project-layout), so apologies in advance it the structure is too simple.
-
-
 ## Getting Set Up
 
 Before running the application, you will need to ensure that you have a few requirements installed;
@@ -18,6 +15,8 @@ You will need Go.
 [Docker](https://docker.com/) is used to build and sharing containerized applications.
 
 ## Project Structure
+
+Following [Standard Go Project Layout](https://github.com/golang-standards/project-layout), apologies in advance if it is too much for the purpose of the assignment.
 
 ### `/cmd`
 
