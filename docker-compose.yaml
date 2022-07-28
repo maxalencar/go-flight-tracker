@@ -1,0 +1,7 @@
+version: '3.9'
+services:
+  flighttracker:
+    build: ./
+    image: flight-tracker
+    ports:
+      - '8080:8080'
