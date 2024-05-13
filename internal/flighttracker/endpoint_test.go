@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
 	"flight-tracker/pkg/model"
@@ -44,7 +43,7 @@ func TestFind(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost, "/find", reqBody)
-			r.Header.Add(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			r.Header.Add("Content-Type", "application/json")
 
 			ei.ServeHTTP(w, r)
 			assert.Equal(t, tc.expected, w.Code)

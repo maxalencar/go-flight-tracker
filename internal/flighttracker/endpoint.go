@@ -1,10 +1,9 @@
 package flighttracker
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 
 	"flight-tracker/pkg/model"
 )
@@ -19,30 +18,33 @@ func newEndpoint(service *service) *endpoint {
 	}
 }
 
-func (e *endpoint) init() *echo.Echo {
-	// Echo instance
-	ei := echo.New()
-
-	// Middleware
-	ei.Use(middleware.Logger())
-	ei.Use(middleware.Recover())
+func (e *endpoint) init() *http.ServeMux {
+	// Initialize HTTP request multiplexer
+	mux := http.NewServeMux()
 
 	// Routes
-	ei.POST("/find", e.find)
+	mux.HandleFunc("POST /find", e.find)
 
-	return ei
+	return mux
 }
 
-func (e endpoint) find(c echo.Context) error {
+func (e endpoint) find(w http.ResponseWriter, r *http.Request) {
 	flights := make([]model.Flight, 0)
-	if err := c.Bind(&flights); err != nil {
-		return err
+	if err := json.NewDecoder(r.Body).Decode(&flights); err != nil {
+		http.Error(w, fmt.Sprintf("failed to decode request body: %v", err), http.StatusBadRequest)
+		return
 	}
 
 	result, err := e.service.findFlightPath(flights)
 	if err != nil {
-		return err
+		http.Error(w, fmt.Sprintf("failed to find flight path: %v", err), http.StatusInternalServerError)
+		return
 	}
 
-	return c.JSON(http.StatusOK, result)
+	// Encode object as JSON and write to response
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(result); err != nil {
+		http.Error(w, fmt.Sprintf("failed to encode response: %v", err), http.StatusInternalServerError)
+		return
+	}
 }
